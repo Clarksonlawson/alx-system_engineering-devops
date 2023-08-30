@@ -1,4 +1,2 @@
 #!/bin/bash
-current= $(pwd)
-
-echo "current"
+echo "$(pwd)"
