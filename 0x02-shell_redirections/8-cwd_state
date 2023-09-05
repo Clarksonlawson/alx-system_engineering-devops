@@ -1,0 +1,2 @@
+#!/bin/bash
+(ls -la > ls_cwd_content 2>/dev/null) || { touch ls_cwd_content && ls -la > ls_cwd_content; }
