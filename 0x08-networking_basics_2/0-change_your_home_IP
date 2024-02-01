@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# This script configures the local DNS resolution for localhost and facebook.com
+
+# Update /etc/hosts file to change localhost IP
+sudo sed -i 's/127.0.0.1/127.0.0.2/' /etc/hosts
+
+# Update /etc/hosts file to change facebook.com IP
+sudo sed -i 's/facebook.com/8.8.8.8/' /etc/hosts
+
+# Display the updated /etc/hosts file
+cat /etc/hosts
