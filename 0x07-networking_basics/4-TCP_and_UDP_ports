@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# Display listening ports with PID and program name
+
+# Check for root privileges
+if [[ $EUID -ne 0 ]]; then
+    echo "Please run the script with sudo or as root."
+    exit 1
+fi
+
+# Display header
+echo "Active Internet connections (only servers)"
+echo "Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name"
+
+# Display listening TCP ports
+netstat -tlnp | grep 'tcp\|tcp6' | awk '{print $1, $4, $7}' | sed 's/:::/[::]/g' | sed 's/\// /g' | column -t
+
+# Display listening UDP ports
+netstat -ulnp | grep 'udp\|udp6' | awk '{print $1, $4, $7}' | sed 's/:::/[::]/g' | sed 's/\// /g' | column -t
+
+# Display header for UNIX domain sockets
+echo "Active UNIX domain sockets (only servers)"
+echo "Proto RefCnt Flags       Type       State         I-Node   PID/Program name    Path"
+
+# Display listening UNIX domain sockets
+netstat -x | grep 'LISTEN' | awk '{print $1, $5, $6, $7}' | column -t
