@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# This script listens on port 98 on localhost
+
+# Use netcat to listen on port 98
+nc -lk 127.0.0.2 98
