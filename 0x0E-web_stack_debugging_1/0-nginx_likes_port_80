@@ -1,26 +1,10 @@
-
- address the issue preventing Nginx from listening on port 80, we'll need to examine the configuration and ensure Nginx is properly set up. Here's a Bash script to automate the fix:
-
-```bash
-#!/usr/bin/env bash
-# This script configures Nginx to listen on port 80
-
-# Ensure Nginx is installed
-if ! dpkg -s nginx &> /dev/null; then
-    apt-get update
-    apt-get install -y nginx
-fi
-
-# Check if Nginx is already configured to listen on port 80
-if ! grep -q "listen 80;" /etc/nginx/sites-available/default; then
-    # Configure Nginx to listen on port 80
-    sed -i 's/listen 80 default_server;/listen 80;/g' /etc/nginx/sites-available/default
-fi
-
-# Restart Nginx to apply changes
-service nginx restart
-```
-
-This script first checks if Nginx is installed and installs it if not. Then, it verifies if Nginx is already configured to listen on port 80. If not, it modifies the configuration file to include the necessary directive. Finally, it restarts Nginx to apply the changes.
-
-You can run this script on your server to ensure Nginx listens on port 80 as required.
+#!/usr/bin/env bash                                                                                                                                       
+# fix nginx listening on port 80                                                                                                                          
+# Go to sites-enabled folder for Nginx                                                                                                                    
+cd /etc/nginx/sites-enabled/ || exit;                                                                                                                             
+# Delete the default file                                                                                                                               
+rm default;                                                                                                                                               
+# Create symbolic link to the deafult file in sites-available                                                                                             
+ln -s /etc/nginx/sites-available/default default;                                                                                                         
+# Restart Nginx                                                                                                                                           
+service nginx restart 
