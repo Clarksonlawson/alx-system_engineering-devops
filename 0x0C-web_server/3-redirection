@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# This script configures Nginx to perform a 301 redirection from /redirect_me to another page
+
+# Ensure Nginx is installed
+if ! dpkg -l | grep -q "nginx"; then
+    echo "Nginx is not installed. Please run the installation script first."
+    exit 1
+fi
+
+# Create a temporary configuration file for the redirection
+cat <<EOF | sudo tee /etc/nginx/sites-available/redirect_me >/dev/null
+server {
+    listen 80;
+    server_name _;
+    return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;
+}
+EOF
+
+# Enable the new configuration
+sudo ln -sf /etc/nginx/sites-available/redirect_me /etc/nginx/sites-enabled/
+
+# Restart Nginx to apply changes
+sudo service nginx restart
+
+echo "Redirection configured successfully."
+
