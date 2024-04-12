@@ -1,15 +1,19 @@
 #!/usr/bin/env bash
-# This script installs and configures Nginx web server on Ubuntu 16.04 LTS.
+# This script installs and configures Nginx web server
 
 # Update package repositories and install Nginx
-apt-get update
-apt-get install -y nginx
+sudo apt update
+sudo apt install nginx -y
 
 # Configure Nginx to listen on port 80
-sed -i 's/listen 80 default_server;/listen 80;/g' /etc/nginx/sites-available/default
+sudo sed -i 's/listen 80 default_server;/listen 80;/g' /etc/nginx/sites-available/default
 
 # Restart Nginx without using systemctl
-service nginx restart
+sudo service nginx stop
+sudo service nginx start
+
+# Create a simple HTML page with "Hello World!" message
+echo 'Hello World!' | sudo tee /var/www/html/index.nginx-debian.html > /dev/null
 
 # Verify Nginx installation by querying the root endpoint
 response=$(curl -s localhost)
