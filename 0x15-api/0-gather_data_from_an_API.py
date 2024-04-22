@@ -1,69 +1,59 @@
 #!/usr/bin/python3
 """
-Module to gather data from an API.
+Returns to-do list information for a given employee ID.
 """
 
 import requests
 import sys
 
-def get_employee_name(employee_id):
-    """Function to get the employee's name from the API."""
-    # Construct the URL for the API endpoint
-    url = f"https://jsonplaceholder.typicode.com/users/{employee_id}"
+def get_employee_todo_list(employee_id):
+    """Fetches the to-do list information for a given employee ID."""
+    # Construct the URL for the API endpoints
+    base_url = "https://jsonplaceholder.typicode.com/"
+    user_url = base_url + "users/{}".format(employee_id)
+    todos_url = base_url + "todos"
 
-    # Send a GET request to the API endpoint
     try:
-        response = requests.get(url)
+        # Fetch user information
+        user_response = requests.get(user_url)
+        user_response.raise_for_status()
+        user_data = user_response.json()
 
-        # Check if the request was successful
-        response.raise_for_status()
+        # Fetch user's to-do list
+        todos_response = requests.get(todos_url, params={"userId": employee_id})
+        todos_response.raise_for_status()
+        todos_data = todos_response.json()
+
+        return user_data, todos_data
     except requests.exceptions.RequestException as e:
         print("Error:", e)
-        return None
+        return None, None
 
-    # Extract the employee's name from the response
-    employee_data = response.json()
-    return employee_data.get('name')
-
-def gather_data(employee_id):
-    """Function to gather data from the API for a given employee ID."""
-    # Get the employee's name
-    employee_name = get_employee_name(employee_id)
-    if employee_name is None:
+def print_todo_list(user_data, todos_data):
+    """Prints the to-do list information."""
+    if user_data is None or todos_data is None:
         return
 
-    # Construct the URL for the API endpoint
-    url = f"https://jsonplaceholder.typicode.com/users/{employee_id}/todos"
+    # Extract relevant information
+    user_name = user_data.get("name")
+    completed_tasks = [t.get("title") for t in todos_data if t.get("completed") is True]
+    total_tasks = len(todos_data)
 
-    # Send a GET request to the API endpoint
-    try:
-        response = requests.get(url)
-
-        # Check if the request was successful
-        response.raise_for_status()
-    except requests.exceptions.RequestException as e:
-        print("Error:", e)
-        return
-
-    # Extract relevant information from the response
-    tasks_data = response.json()
-    total_tasks = len(tasks_data)
-    completed_tasks = [task['title'] for task in tasks_data if task['completed']]
-
-    # Display the information in the specified format
-    print(f"Employee {employee_name} is done with tasks ({len(completed_tasks)}/{total_tasks}):")
+    # Print information in the specified format
+    print("Employee {} is done with tasks ({}/{}):".format(user_name, len(completed_tasks), total_tasks))
     for task in completed_tasks:
-        print(f"\t{task}")
+        print("\t{}".format(task))
 
 if __name__ == "__main__":
     # Check if the correct number of arguments is provided
     if len(sys.argv) != 2:
-        print("Usage: python3 0-gather_data_from_an_API.py <employee_id>")
+        print("Usage: {} <employee_id>".format(sys.argv[0]))
         sys.exit(1)
 
     # Extract the employee ID from the command-line arguments
     employee_id = int(sys.argv[1])
 
-    # Call the gather_data function with the provided employee ID
-    gather_data(employee_id)
+    # Fetch and print the to-do list information
+    user_data, todos_data = get_employee_todo_list(employee_id)
+    print_todo_list(user_data, todos_data)
 
