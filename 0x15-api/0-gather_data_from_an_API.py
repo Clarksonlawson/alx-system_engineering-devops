@@ -18,13 +18,19 @@ def get_employee_name(employee_id):
 
         # Check if the request was successful
         response.raise_for_status()
+
+        # Extract the employee's name from the response
+        employee_data = response.json()
+
+        # Verify if the retrieved employee ID matches the provided one
+        if employee_data.get('id') != employee_id:
+            print("Error: Employee ID does not exist.")
+            return None
+
+        return employee_data.get('name')
     except requests.exceptions.RequestException as e:
         print("Error:", e)
         return None
-
-    # Extract the employee's name from the response
-    employee_data = response.json()
-    return employee_data.get('name')
 
 
 def gather_data(employee_id):
