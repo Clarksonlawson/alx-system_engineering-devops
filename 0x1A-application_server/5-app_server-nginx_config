@@ -1,0 +1,12 @@
+server {
+    listen 80;
+
+    location / {
+        proxy_pass http://127.0.0.1:5003;
+    }
+
+    location /static/ {
+        alias /AirBnB_clone_v4/web_dynamic/static/;
+    }
+}
+
